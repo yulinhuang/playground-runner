@@ -23,4 +23,4 @@ jobs:
         run: |
           docker stop deploy_playground || true  # Stop the old container if it exists
           docker rm deploy_playground || true   # Remove the old container if it exists
-          docker run -d -p 9990:80 --name deploy_playground playground_runner_image
+          docker run -d -p 8889:80 --name deploy_playground playground_runner_image
