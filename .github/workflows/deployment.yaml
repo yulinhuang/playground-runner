@@ -1,0 +1,33 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - main  # Change this to the branch you want to trigger the workflow
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Log in to DockerHub (optional, for pushing images)
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build . -t playground_runner_image
+
+      # Deploy the Docker container
+      - name: Deploy container
+        run: |
+          docker stop deploy_playground || true  # Stop the old container if it exists
+          docker rm deploy_playground || true   # Remove the old container if it exists
+          docker run -d -p 9990:80 --name deploy_playground playground_runner_image
